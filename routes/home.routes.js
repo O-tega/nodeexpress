@@ -1,59 +1,66 @@
-
-const express = require('express');
+// import express and router
+const express = require("express");
 const router = express.Router();
-const multer = require('multer');
-const path = require('path')
 
-const storage = multer.diskStorage({
-    destination: (req, file, callback)=>{
-        callback(null, 'uploads/complain_img/')
-    },
+//import other files.
+const path = require("path");
 
-    filename: (req, file, callback)=>{
-        callback(null, `${Date.now()}-${file.originalname}`)
-    },
-})
-
-const upload = multer({storage, 
-    limits:{filesize:10000},
-    fileFilter:(req, file, callback)=>{
-        const extname = path.extname(file.originalname);
-        if(extname === '.jpg' || extname ==='.png' || extname ==='.txt'){
-            return callback(null, true);
-        }
-        return (callback(new Error('file type not supported'), false));
-    },
-}).single('file');
-
-router.get('/', function (req, res, next){
-    res.render('index.ejs', {
-        title: 'home',
-        server_url: req.server_url,
-    });
+//home routes
+router.get("/", (req, res, next) => {
+	res.render("index.ejs", {
+		title: "Home",
+		server_url: req.server_url,
+	});
 });
 
-router.get('/about', (req, res, next) =>{
-    res.render('about.ejs', {
-        title:'about',
-        server_url: req.server_url,
-    });
-});
+// about routes
+router.get(
+	"/about",
+	(req, res, next) => {
+		res.render("about.ejs", {
+			title: "About us",
+			server_url: req.server_url,
+		});
+	},
+);
 
-router.get('/contact', (req, res, next) => {
-    res.render('contact.ejs', {
-        title: 'contact',
-        server_url: req.server_url,
-    });
-});
-router.post('/complain', (req, res, next)=>{
-    upload(req, res, (err)=>{
-        if (err) {
-            return next(new Error(err));
-        }
-        res.send({body: req.body, file: req.file});
-    });
-});
+// contact routes
+router.get(
+	"/contact",
+	(req, res, next) => {
+		res.render("contact.ejs", {
+			title: "contact us",
+			server_url: req.server_url,
+		});
+	},
+);
 
+// Upload route
+router.get(
+	"/uploads",
+	(req, res, next) => {
+		console.log(req.body)
+		res.render("uploads.ejs", {
+			title: "Uploads",
+			server_url: req.server_url,
+		});
+	},
+);
 
+// we will create a post route for complain
+router.post(
+	"/complain",
+	(req, res, next) => {
+		res.send(req.body);
+	},
+);
+
+router.post(
+	"/uploadone",
+	(req, res, next) => {
+		console.log(req.body)
+		res.send(req.body);
+	},
+);
 
 module.exports = router;

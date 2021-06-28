@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+	<%- include('./includes/head.ejs') %>
+	<body>
+		<%- include('./includes/navbar.ejs')%>
+
+        <h5 class="text-center m-3">Uploads Files here</h5><hr>
+
+            <form
+                action="<%= server_url %>uploadone "
+                method="POST"
+                enctype=""
+            >
+            <div class="container">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                name="firstname"
+                                id="firstname"
+                                class="form-control"
+                                placeholder="enter first name"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                name="lastanme"
+                                id="lastname"
+                                class="form-control"
+                                placeholder="enter lastname"
+                            />
+                        </div>
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            class="form-control m-1"
+                            placeholder="enter your email"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <input
+                            type="file"
+                            name="file"
+                            id="file"
+                            class="form-control m-1"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <textarea
+                            name="description"
+                            id="description"
+                            cols="30"
+                            rows="10"
+                            class = "form-control"
+                        >Give a short description of the file that you are uploading</textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="upload" class="btn btn-outline-info m-1">
+                    </div>
+            </div>
+            </form>
+	</body>
+</html>
