@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../includes/head.ejs') %> 
+<body>
+    <%- include('../includes/navbar.ejs')  %> 
+    <h5><%=product.title%> </h5>
+    <p><%=product.description%> </p>
+
+    <a href="<%= server_url %>product/edit/<%= product._id %>  " class="btn btn-warning">Edit product</a>
+</body>
+</html>

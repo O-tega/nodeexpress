@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- include head -->
+<%- include('./includes/head.ejs')  %> 
+<body>
+    <!-- include navbar -->
+    <%- include('./includes/navbar.ejs')%>
+    
+    <form 
+        action="<%= server_url %>complain" 
+        method="POST"
+        enctype= "multipart/form-data"
+    >
+        <div class="container">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input 
+                            type="text"
+                            class="form-control"
+                            placeholder="enter firstname"
+                            name="firstname"
+                            />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input 
+                            type="text"
+                            class="form-control"
+                            placeholder="enter firstname"
+                            name="lastname"
+                            />
+                    </div>
+                </div>  
+            </div>
+            <div class="form-group">
+                <input 
+                    type="email" 
+                    class="form-control" 
+                    placeholder="enter your email"
+                    name="email" />
+            </div>
+            <div class="form-group">
+                <input type="file" class="form-control" 
+                name="file"/>
+            </div>
+            <div class="form-group">
+                <textarea 
+                    name="" 
+                    id="" 
+                    cols="30" 
+                    rows="10"
+                    class="form-control"
+                    name="description">
+                </textarea>
+            </div>
+            <div class="from-group">
+                <input type="submit" value="send info" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+</body>
+</html>
