@@ -1,58 +1,38 @@
-//import
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
-const methodOverride = require('method-override');
-//file import
-const { person, students } = require('./data');
 
-//route imports
-const phoneRoutes = require('./routes/phones.routes');
-const homeRoutes = require('./routes/home.routes');
-const productRoutes = require('./routes/products.routes');
+const productRoutes = require('./routes/product.routes');
+const categoryRoutes = require('./routes/category.routes');
 
-//initialize express
+const ApiError = require('./utils/apiError')
+
 const app = express();
 
-//set view engine
-app.set('view engine', 'ejs');
-
-//set views directory
-app.set('views', path.join(__dirname, 'views'));
-
-//seting up request middleware
-//NOTE: this is used for sending data from the frontend to the server
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//set static dir
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(methodOverride('_method'));
-//globals
-app.use((req, res, next) => {
-  req.server_url = 'http://localhost:5000/';
-  next();
+app.use('/api/product', productRoutes);
+app.use('/api/category', categoryRoutes);
+
+// catching 404 on my get method
+app.all('*', (req, res, next) =>{
+  return next(new ApiError('route does not exist', 404))
 });
 
-//home routes
-app.use('/', homeRoutes);
 
-//phones route
-app.use('/phones', phoneRoutes);
-
-//product routes
-app.use('/product', productRoutes);
-
-//api routes
-app.get('/api/students', (req, res, next) => {
-  res.status(200).json({
-    status: 'success',
-    message: students,
+// setting up global error
+// TODO: document your apiError class
+app.use((err, req, res, next)=>{
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+  res.status(err.statusCode).json({
+    status: err.status,
+    error: err,
+    data: err.message,
+    stack: err.stack,
   });
 });
 
-const PORT = process.env.PORT || 5000;
 
 mongoose
   .connect('mongodb://localhost:27017/eShop', {
@@ -60,13 +40,11 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log('database connected successfully');
+    console.log('database connection is successfull');
   })
-  .catch((err) => console.log('ERROR: ', err));
+  .catch((err) => console.log(err));
 
-//listen to port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(
-    `server is runing on http://127.0.0.1:${PORT}\nor http://localhost:${PORT}`
-  );
+  console.log(`server is running on http://localhost:${PORT}`);
 });
