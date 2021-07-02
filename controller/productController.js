@@ -1,75 +1,147 @@
-const multer = require('multer')
-const Product = require('../models/Product');
+const multer = require("multer");
+const Product = require("../models/Product");
+const path = require("path");
+const ApiError = require("../utils/apiError");
 
+const storage = multer.diskStorage({
+	destination: (
+		req,
+		file,
+		callback,
+	) => {
+		callback(null, "uploads/product");
+	},
+	filename: (req, file, callback) => {
+		callback(
+			null,
+			`${Date.now()}-${
+				file.originalname
+			}`,
+		);
+	},
+});
 
+const upload = multer({
+	storage,
+	limits: { filesize: 100000 },
+	fileFilter: (req, file, callback) => {
+		const extname = path
+			.extname(file.originalname)
+			.toLowerCase();
+		if (
+			extname === ".jpg" ||
+			extname === ".png"
+		) {
+			return callback(null, true);
+		}
 
-const storage = multer.diskstorage({
-  destination (req, file, callback) =>{},
-  filename: (req, file, callback)=>{
-    
-  },
-})
+		return callback(
+			new ApiError(
+				"file type not supported",
+				400,
+			),
+			false,
+		);
+	},
+}).single("file");
 
+exports.createProduct = async (
+	req,
+	res,
+	next,
+) => {
+  upload(req, res, async (err) => {
+	try {
+			if (err)
+				next(new ApiError(err, 400));
 
-exports.createProduct = async (req, res, next) => {
-  try {
-    const product = await Product.create(req.body);
-    res.status(200).json({
-      status: 'success',
-      data: product,
-    });
-  } catch (error) {
-    next(error);
-  }
+			let data = {
+				...req.body,
+				product_img: req.file ? `uploads/product/${req.file.filename}` : 'uploads/product/default.jpg',
+			};
+      // res.send(data) used to send data directly to postman
+      const product = await Product.create(data);
+      res.status(200).json({
+        status: 'success',
+        data: product,
+      });
+    } catch (error) {
+      next(error);
+     }
+		});
+
 };
 
-exports.getAllProduct = async (req, res, next) => {
-  try {
-    const product = await Product.find();
-    res.status(200).json({
-      status: 'success',
-      data: product,
-    });
-  } catch (error) {
-    next(error);
-  }
+exports.getAllProduct = async (
+	req,
+	res,
+	next,
+) => {
+	try {
+		const product =
+			await Product.find();
+		res.status(200).json({
+			status: "success",
+			data: product,
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
-exports.getProductById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const product = await Product.findById({ _id: id });
+exports.getProductById = async (
+	req,
+	res,
+	next,
+) => {
+	try {
+		const { id } = req.params;
+		const product =
+			await Product.findById({
+				_id: id,
+			});
 
-    res.status(200).json({
-      status: 'success',
-      data: product,
-    });
-  } catch (error) {
-    next(error);
-  }
+		res.status(200).json({
+			status: "success",
+			data: product,
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 //TODO: create update method for db
-exports.updateProduct = async (req, res, next) => {
-  try {
-    const product = await Product.findByIdAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      { new: true }
-    );
-    res.status(200).json({
-      status: 'success',
-      data: product,
-    });
-  } catch (error) {
-    next(error);
-  }
+//TODO: add feature updating product image
+exports.updateProduct = async (
+	req,
+	res,
+	next,
+) => {
+	try {
+		const product =
+			await Product.findByIdAndUpdate(
+				{ _id: req.params.id },
+				req.body,
+				{ new: true },
+			);
+		res.status(200).json({
+			status: "success",
+			data: product,
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 //TODO: create delete method for db
-exports.deleteProduct = (req, res, next) => {
-  res.status(200).json({
-    status: 'success',
-    data: 'deleted',
-  });
+//TODO: delete the product image file with the deleted product
+exports.deleteProduct = (
+	req,
+	res,
+	next,
+) => {
+	res.status(200).json({
+		status: "success",
+		data: "deleted",
+	});
 };

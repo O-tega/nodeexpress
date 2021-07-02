@@ -13,14 +13,23 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: '/uploads/product_img/default.jpg',
   },
-  description: String,
+  description: {
+    type: String,
+    required: [true, 'a product must have a description'],
+  },
   quantity: Number,
   category: {
     type: mongoose.Schema.ObjectId,
     ref: 'Category',
     required: [true, 'a product must belong to a category'],
   },
-});
+},
+{
+  timestamps: true,
+  toObject: {virtuals: true},
+  toJSON: {virtuals: true}
+}
+);
 
 const Product = mongoose.model('Product', productSchema);
 

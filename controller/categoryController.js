@@ -27,8 +27,10 @@ exports.getAllCategory = async (req, res, next) => {
 
 exports.getCategoryProduct = async (req, res, next) => {
   try {
-    const category = await Product.find({ category: req.params.id }).populate({
+    const category = await Product.find({}).populate({
       path: 'category',
+      select: 'title _id',
+      exclude: 'createdAt updatedAt',
     });
     res.status(201).json({
       status: 'success',
