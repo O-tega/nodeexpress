@@ -6,12 +6,16 @@ const {
   getCategoryProduct,
 } = require('../controller/categoryController');
 
+const { Authorization, roles } = require('../controller/authController')
+
 const router = express.Router();
 
-router.post('/create', create);
 router.get('/', getAllCategory);
-router.get('/:catId', getCategoryProduct);
+router.get('/products', getCategoryProduct);
 
-//TODO: complete the crud methods
+router.use(Authorization)
+router.post('/create', roles('user'), create);
+
+//TODO: complete the crud methods i.e. patch and delete and retrieve documents by id
 
 module.exports = router;

@@ -5,6 +5,7 @@ const catgorySchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, 'a catgory must have a title 😡😡😒'],
+      unique: [true, "category already exist"],
     },
   },
 

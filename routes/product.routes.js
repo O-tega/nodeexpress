@@ -1,15 +1,18 @@
 const router = require('express').Router();
 
 const productController = require('../controller/productController');
-
-router.post('/create', productController.createProduct);
+const { Authorization, roles } = require('../controller/authController');
 
 router.get('/', productController.getAllProduct);
-
 router.get('/:id', productController.getProductById);
 
-router.patch('/update/:id', productController.updateProduct);
-
-router.delete('/delete/:id', productController.deleteProduct);
+router.use(Authorization);
+router.post(
+  '/create',
+  roles('admin', 'guide'),
+  productController.createProduct
+);
+router.patch('/update/:id', roles('admin'), productController.updateProduct);
+router.delete('/delete/:id', roles('admin'), productController.deleteProduct);
 
 module.exports = router;
